@@ -9,6 +9,7 @@ import com.example.demo.entity.User;
 import com.example.demo.enums.Role;
 import com.example.demo.exception.EmailAlreadyExistsException;
 import com.example.demo.exception.InvalidCredentialsException;
+import com.example.demo.repository.ProfileRepository;
 import com.example.demo.repository.SessionRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.security.JwtService;
@@ -33,6 +34,7 @@ public class AuthServiceImpl implements AuthService {
 
    private final UserRepository userRepository;
    private final SessionRepository sessionRepository;
+   private final ProfileRepository profileRepository;
    private final ModelMapper modelMapper;
    private final PasswordEncoder passwordEncoder;
    private final AuthenticationManager authenticationManager;
@@ -62,18 +64,28 @@ public class AuthServiceImpl implements AuthService {
             new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
          );
          UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+         User user = userPrincipal.getUser();
 
          String accessToken = jwtService.generateToken(userPrincipal);
          String refreshToken = jwtService.generateRefreshToken(userPrincipal);
 
          Session session = Session.builder()
-            .user(userPrincipal.getUser())
+            .user(user)
             .refreshToken(refreshToken)
             .expiresAt(LocalDateTime.now().plusSeconds(refreshExpiration / 1000))
             .build();
          sessionRepository.save(session);
 
-         return new LoginResponse(accessToken, refreshToken);
+         // Check if user has a complete profile
+         boolean profileComplete = profileRepository.findByUser(user)
+            .map(profile -> profile.getIsComplete())
+            .orElse(false);
+
+         // Map user to DTO and add profile status
+         UserDTO userDTO = modelMapper.map(user, UserDTO.class);
+         userDTO.setProfileComplete(profileComplete);
+
+         return new LoginResponse(accessToken, refreshToken, userDTO);
       } catch (BadCredentialsException e) {
          throw new InvalidCredentialsException("Invalid email or password");
       }

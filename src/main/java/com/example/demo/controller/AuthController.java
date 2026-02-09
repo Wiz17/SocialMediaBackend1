@@ -38,7 +38,7 @@ public class AuthController {
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, refreshCookie.toString())
-                .body(new LoginResponse(response.getAccessToken(), null));
+                .body(new LoginResponse(response.getAccessToken(), null, response.getUser()));
     }
 
     @PostMapping("/refresh")
@@ -46,7 +46,7 @@ public class AuthController {
         String newAccessToken = authService.refreshToken(refreshToken);
 
         return ResponseEntity.ok()
-                .body(new LoginResponse(newAccessToken, null));
+                .body(new LoginResponse(newAccessToken, null, null));
     }
 
     @PostMapping("/logout")

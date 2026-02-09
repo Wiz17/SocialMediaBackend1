@@ -18,10 +18,5 @@ public class UserController {
 
     private final ModelMapper modelMapper;
 
-    @GetMapping("/me")
-    public ResponseEntity<UserDTO> getCurrentUser(@AuthenticationPrincipal UserPrincipal principal) {
-        User user = principal.getUser();
-        UserDTO userDTO = modelMapper.map(user, UserDTO.class);
-        return ResponseEntity.ok(userDTO);
-    }
+    // Create here /account route for account creation.
 }
