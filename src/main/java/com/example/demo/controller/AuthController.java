@@ -7,6 +7,7 @@ import com.example.demo.dto.UserDTO;
 import com.example.demo.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,8 +22,8 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/signup")
-    public UserDTO signup(@RequestBody SignupRequest signupRequest) {
-        return authService.signup(signupRequest);
+    public ResponseEntity<UserDTO> signup(@RequestBody SignupRequest signupRequest) {
+        return new ResponseEntity<>(authService.signup(signupRequest),HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
@@ -45,8 +46,7 @@ public class AuthController {
     public ResponseEntity<LoginResponse> refresh(@CookieValue("refreshToken") String refreshToken) {
         String newAccessToken = authService.refreshToken(refreshToken);
 
-        return ResponseEntity.ok()
-                .body(new LoginResponse(newAccessToken, null, null));
+        return new ResponseEntity<>(new LoginResponse(newAccessToken, null, null), HttpStatus.OK);
     }
 
     @PostMapping("/logout")

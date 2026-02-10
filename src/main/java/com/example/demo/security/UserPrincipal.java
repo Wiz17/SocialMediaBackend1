@@ -3,8 +3,10 @@ package com.example.demo.security;
 import com.example.demo.entity.User;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
@@ -49,5 +51,15 @@ public class UserPrincipal implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true; // Change to: return user.isEmailVerified(); when implementing email verification
+    }
+
+    /**
+     * Helper method to get the currently authenticated User from Spring Security context
+     * @return the authenticated User entity
+     */
+    public static User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+        return userPrincipal.getUser();
     }
 }
