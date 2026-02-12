@@ -7,7 +7,10 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "session")
+@Table(name = "session", indexes = {
+    @Index(name = "idx_session_refresh_token", columnList = "refreshToken"),
+    @Index(name = "idx_session_user_id", columnList = "user_id")
+})
 @Data
 @Builder
 @NoArgsConstructor
