@@ -193,6 +193,7 @@ public class Post {
     private Integer commentsCount = 0;
 
     private LocalDateTime createdAt;
+    
     private LocalDateTime updatedAt;
 
     @PrePersist
