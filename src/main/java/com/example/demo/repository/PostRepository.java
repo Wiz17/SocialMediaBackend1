@@ -9,5 +9,5 @@ import com.example.demo.entity.Posts;
 
 @Repository
 public interface PostRepository extends JpaRepository<Posts, UUID> {
-
+    
 }
