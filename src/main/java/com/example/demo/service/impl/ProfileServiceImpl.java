@@ -15,10 +15,10 @@ import com.example.demo.exception.FileUploadException;
 import com.example.demo.exception.ProfileAlreadyExistsException;
 import com.example.demo.exception.ProfileNotFoundException;
 import com.example.demo.exception.UsernameAlreadyExistsException;
+import com.example.demo.helper.SupabaseStorageService;
 import com.example.demo.repository.ProfileRepository;
 import com.example.demo.security.UserPrincipal;
 import com.example.demo.service.ProfileService;
-import com.example.demo.service.SupabaseStorageService;
 
 import lombok.RequiredArgsConstructor;
 
