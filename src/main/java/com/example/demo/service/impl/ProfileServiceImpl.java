@@ -53,7 +53,7 @@ public class ProfileServiceImpl implements ProfileService {
         // Upload profile photo if provided
         if (profilePhoto != null && !profilePhoto.isEmpty()) {
             try {
-                String photoUrl = supabaseStorageService.uploadProfilePhoto(profilePhoto);
+                String photoUrl = supabaseStorageService.uploadImage(profilePhoto, "profiles");
                 profile.setProfilePhotoUrl(photoUrl);
             } catch (IOException e) {
                 throw new FileUploadException("Failed to upload profile photo: " + e.getMessage(), e);
@@ -107,7 +107,7 @@ public class ProfileServiceImpl implements ProfileService {
                 }
 
                 // Upload new photo
-                String photoUrl = supabaseStorageService.uploadProfilePhoto(profilePhoto);
+                String photoUrl = supabaseStorageService.uploadImage(profilePhoto, "profiles");
                 profile.setProfilePhotoUrl(photoUrl);
             } catch (IOException e) {
                 throw new FileUploadException("Failed to upload profile photo: " + e.getMessage(), e);

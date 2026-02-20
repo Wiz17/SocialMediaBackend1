@@ -46,22 +46,23 @@ public class SupabaseStorageService {
     }
 
     /**
-     * Uploads a profile photo to Supabase Storage
+     * Uploads an image to Supabase Storage under a specific folder
      * @param file The image file to upload
+     * @param folder The folder prefix (e.g., "profiles", "posts")
      * @return The public URL of the uploaded image
      * @throws IOException If file reading fails
      * @throws FileUploadException If upload fails or validation fails
      */
-    public String uploadProfilePhoto(MultipartFile file) throws IOException {
+    public String uploadImage(MultipartFile file, String folder) throws IOException {
         // Validate file
         validateFile(file);
 
         // Get current user
         User user = UserPrincipal.getCurrentUser();
 
-        // Generate unique filename with user folder structure
+        // Generate unique filename: folder/userId/uuid.ext
         String fileName = generateFileName(file.getOriginalFilename());
-        String filePath = user.getId() + "/" + fileName;
+        String filePath = folder + "/" + user.getId() + "/" + fileName;
 
         try {
             // Upload to Supabase Storage
@@ -120,7 +121,7 @@ public class SupabaseStorageService {
         if (originalFilename != null && originalFilename.contains(".")) {
             extension = originalFilename.substring(originalFilename.lastIndexOf("."));
         }
-        return "profile-" + UUID.randomUUID().toString() + extension;
+        return UUID.randomUUID().toString() + extension;
     }
 
     /**

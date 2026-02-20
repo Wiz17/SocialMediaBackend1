@@ -1,9 +1,10 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.PostsDTO;
-import com.example.demo.dto.PostsRequest;
+
+import org.springframework.web.multipart.MultipartFile;
 
 public interface PostService {
-    PostsDTO createPost(PostsRequest postRequest);
-    PostsDTO updatePost(PostsRequest postsRequest);
+    PostsDTO createPost(MultipartFile image, String description);
+    PostsDTO updatePost(MultipartFile image, String description);
 }
