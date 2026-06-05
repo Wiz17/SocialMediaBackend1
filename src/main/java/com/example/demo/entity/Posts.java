@@ -8,7 +8,10 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "posts")
+@Table(name = "posts", indexes = {
+    @Index(name = "idx_posts_user_id", columnList = "user_id"),
+    @Index(name = "idx_posts_created_at", columnList = "createdAt")
+})
 @Data
 @Builder
 @NoArgsConstructor

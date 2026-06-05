@@ -7,7 +7,9 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "profile")
+@Table(name = "profile", indexes = {
+    @Index(name = "idx_profile_username", columnList = "username")
+})
 @Data
 @Builder
 @NoArgsConstructor
