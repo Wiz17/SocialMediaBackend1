@@ -2,6 +2,8 @@ package com.example.demo.service.impl;
 
 import java.io.IOException;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -63,6 +65,23 @@ public class PostServiceImpl implements PostService {
                 .createdAt(savedPost.getCreatedAt())
                 .updatedAt(savedPost.getUpdatedAt())
                 .build();
+    }
+
+    @Override
+    public Page<PostsDTO> getUserPosts(Pageable pageable) {
+        User user = UserPrincipal.getCurrentUser();
+
+        return postRepository.findByUser(user, pageable)
+                .map(post -> PostsDTO.builder()
+                        .id(post.getId())
+                        .imageurl(post.getImageurl())
+                        .description(post.getDescription())
+                        .userId(user.getId())
+                        .likesCount(post.getLikesCount())
+                        .commentsCount(post.getCommentsCount())
+                        .createdAt(post.getCreatedAt())
+                        .updatedAt(post.getUpdatedAt())
+                        .build());
     }
 
     @Override
