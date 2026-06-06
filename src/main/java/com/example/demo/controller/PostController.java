@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import java.util.UUID;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -7,6 +9,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,6 +34,15 @@ public class PostController {
             @RequestParam("description") String description) {
 
         return new ResponseEntity<>(postService.createPost(image, description), HttpStatus.CREATED);
+    }
+
+    @PatchMapping(value = "/{postId}", consumes = "multipart/form-data")
+    public ResponseEntity<PostsDTO> updatePost(
+            @PathVariable UUID postId,
+            @RequestParam(required = false) MultipartFile image,
+            @RequestParam(required = false) String description) {
+
+        return ResponseEntity.ok(postService.updatePost(postId, image, description));
     }
 
     @GetMapping("/my-posts")

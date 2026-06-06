@@ -1,6 +1,7 @@
 package com.example.demo.service.impl;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,6 +13,7 @@ import com.example.demo.entity.Posts;
 import com.example.demo.entity.Profile;
 import com.example.demo.entity.User;
 import com.example.demo.exception.FileUploadException;
+import com.example.demo.exception.PostNotFoundException;
 import com.example.demo.helper.SupabaseStorageService;
 import com.example.demo.repository.PostRepository;
 import com.example.demo.repository.ProfileRepository;
@@ -85,9 +87,40 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PostsDTO updatePost(MultipartFile image, String description) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updatePost'");
+    @Transactional
+    public PostsDTO updatePost(UUID postId, MultipartFile image, String description) {
+        User user = UserPrincipal.getCurrentUser();
+
+        Posts post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException("Post not found with id: " + postId));
+
+        if (image != null && !image.isEmpty()) {
+            if (post.getImageurl() != null) {
+                supabaseStorageService.deleteFile(post.getImageurl());
+            }
+            try {
+                post.setImageurl(supabaseStorageService.uploadImage(image, "posts"));
+            } catch (IOException e) {
+                throw new FileUploadException("Failed to upload post image: " + e.getMessage());
+            }
+        }
+
+        if (description != null && !description.isBlank()) {
+            post.setDescription(description);
+        }
+
+        Posts savedPost = postRepository.save(post);
+
+        return PostsDTO.builder()
+                .id(savedPost.getId())
+                .imageurl(savedPost.getImageurl())
+                .description(savedPost.getDescription())
+                .userId(user.getId())
+                .likesCount(savedPost.getLikesCount())
+                .commentsCount(savedPost.getCommentsCount())
+                .createdAt(savedPost.getCreatedAt())
+                .updatedAt(savedPost.getUpdatedAt())
+                .build();
     }
 
 }
